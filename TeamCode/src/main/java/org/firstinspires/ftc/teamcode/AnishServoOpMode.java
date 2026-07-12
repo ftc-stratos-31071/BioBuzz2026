@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.teamcode.ServoConfig;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp()
-public class ServoOpMode extends OpMode {
-    ServoConfig servo = new ServoConfig();
+public class AnishServoOpMode extends OpMode {
+    AnishServoConfig servo = new AnishServoConfig();
     @Override
     public void init() {
         servo.init(hardwareMap);

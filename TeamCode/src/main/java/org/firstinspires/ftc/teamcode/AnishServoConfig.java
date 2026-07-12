@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class ServoConfig {
+public class AnishServoConfig {
     public double position = 0.5;
 
     private Servo servo;

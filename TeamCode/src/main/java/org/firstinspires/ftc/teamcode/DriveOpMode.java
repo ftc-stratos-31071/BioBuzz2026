@@ -7,42 +7,88 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp()
 public class DriveOpMode extends LinearOpMode {
 
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
+    private DcMotor frontleft;
+    private DcMotor frontright;
+    private DcMotor backleft;
+    private DcMotor backright;
+    private DcMotor intake;
+    private DcMotor shootright;
+    private DcMotor shootleft;
+    private DcMotor transfer;
 
     @Override
     public void runOpMode() {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
+        frontleft = hardwareMap.get(DcMotor.class, "frontleft");
+        frontright = hardwareMap.get(DcMotor.class, "frontright");
+        backleft = hardwareMap.get(DcMotor.class, "backleft");
+        backright = hardwareMap.get(DcMotor.class, "backright");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        transfer = hardwareMap.get(DcMotor.class, "transfer");
+        shootleft = hardwareMap.get(DcMotor.class, "shootleft");
+        shootright = hardwareMap.get(DcMotor.class, "shootright");
+
+        boolean shooting = false;
 
         // reversing right motors
-//        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-//        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-//        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-//        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+//        frontleft.setDirection(DcMotorSimple.Direction.FORWARD);
+//        backleft.setDirection(DcMotorSimple.Direction.FORWARD);
+//        frontright.setDirection(DcMotorSimple.Direction.REVERSE);
+//        backright.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
         while (opModeIsActive()) {
+            // DRIVE:
             // left stick - driving/strafing, right stick - turning
-            double y = -gamepad1.left_stick_y;  // Note: Y stick is reversed
+            double y = -gamepad1.left_stick_y;  // y stick is reversed
             double x = gamepad1.left_stick_x;   // strafing
             double rx = gamepad1.right_stick_x; // rotating
 
+            // calculate motor speeds
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+            double frontleftPower = (y + x + rx) / denominator;
+            double backleftPower = (y - x + rx) / denominator;
+            double frontrightPower = (y - x - rx) / denominator;
+            double backrightPower = (y + x - rx) / denominator;
 
-            frontLeft.setPower(frontLeftPower);
-            backLeft.setPower(backLeftPower);
-            frontRight.setPower(frontRightPower);
-            backRight.setPower(backRightPower);
+            frontleft.setPower(frontleftPower);
+            backleft.setPower(backleftPower);
+            frontright.setPower(frontrightPower);
+            backright.setPower(backrightPower);
+
+            // INTAKE:
+            // forward intake
+            if (gamepad1.left_bumper) {
+                intake.setPower(1);
+            // reverse intake
+            } else if (gamepad1.b) {
+                intake.setPower(-1);
+                transfer.setPower(-1);
+            } else {
+                intake.setPower(0);
+            }
+
+            // TRANSFER + SHOOTING:
+            // check if shooter should be stopped or started
+            if (gamepad1.right_bumper) {
+                // toggle off or on
+                shooting = !shooting;
+
+                // change motor powers according to new value of "shooting"
+                if (shooting) {
+                    shootright.setPower(0.5);
+                    shootleft.setPower(-0.5);
+                } else {
+                    shootright.setPower(0);
+                    shootleft.setPower(0);
+                }
+            }=
+            [
+                    'if (gamepad1.a) {
+                transfer.setPower(1);
+            } else {
+                transfer.setPower(0);
+            }
         }
     }
 }

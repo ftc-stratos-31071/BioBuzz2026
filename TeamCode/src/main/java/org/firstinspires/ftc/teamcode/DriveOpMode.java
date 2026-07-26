@@ -6,16 +6,26 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp()
 public class DriveOpMode extends LinearOpMode {
+
+    private DcMotor frontleft;
+    private DcMotor frontright;
+    private DcMotor backleft;
+    private DcMotor backright;
+    private DcMotor intake;
+    private DcMotor shootright;
+    private DcMotor shootleft;
+    private DcMotor transfer;
+
     @Override
     public void runOpMode() {
-        DcMotor frontleft = hardwareMap.get(DcMotor.class, "frontleft");
-        DcMotor frontright = hardwareMap.get(DcMotor.class, "frontright");
-        DcMotor backleft = hardwareMap.get(DcMotor.class, "backleft");
-        DcMotor backright = hardwareMap.get(DcMotor.class, "backright");
-        DcMotor intake = hardwareMap.get(DcMotor.class, "intake");
-        DcMotor transfer = hardwareMap.get(DcMotor.class, "transfer");
-        DcMotor shootleft = hardwareMap.get(DcMotor.class, "shootleft");
-        DcMotor shootright = hardwareMap.get(DcMotor.class, "shootright");
+        frontleft = hardwareMap.get(DcMotor.class, "frontleft");
+        frontright = hardwareMap.get(DcMotor.class, "frontright");
+        backleft = hardwareMap.get(DcMotor.class, "backleft");
+        backright = hardwareMap.get(DcMotor.class, "backright");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        transfer = hardwareMap.get(DcMotor.class, "transfer");
+        shootleft = hardwareMap.get(DcMotor.class, "shootleft");
+        shootright = hardwareMap.get(DcMotor.class, "shootright");
 
         boolean shooting = false;
         boolean lastrightbumper = false;
@@ -51,12 +61,10 @@ public class DriveOpMode extends LinearOpMode {
             // forward intake
             if (gamepad1.left_bumper) {
                 intake.setPower(1);
-                System.out.println("forward intake...");
-            // reverse intake
+                // reverse intake
             } else if (gamepad1.b) {
                 intake.setPower(-1);
                 transfer.setPower(-1); // don't need the setPower(0) line in the else statement here because in the next if block it already sets it to 0
-                System.out.println("reverse intake...");
             } else {
                 intake.setPower(0);
             }
@@ -65,7 +73,6 @@ public class DriveOpMode extends LinearOpMode {
             // check if shooter should be stopped or started
             if (gamepad1.a) {
                 transfer.setPower(1);
-                System.out.println("shooting...");
             } else {
                 transfer.setPower(0);
             }
@@ -73,20 +80,19 @@ public class DriveOpMode extends LinearOpMode {
             if (gamepad1.right_bumper != lastrightbumper) {
                 // toggle off or on
                 shooting = !shooting;
-                System.out.println("shooting = " + shooting);
-            }
 
-            lastrightbumper = gamepad1.right_bumper;
+                lastrightbumper = gamepad1.right_bumper;
 
-            // change motor powers according to new value of "shooting"
-            if (shooting) {
-                shootright.setPower(0.5);
-                shootleft.setPower(-0.5);
-            } else {
-                shootright.setPower(0);
-                shootleft.setPower(0);
-            }
+                // change motor powers according to new value of "shooting"
+                if (shooting) {
+                    shootright.setPower(0.5);
+                    shootleft.setPower(-0.5);
+                } else {
+                    shootright.setPower(0);
+                    shootleft.setPower(0);
+                }
             }
         }
     }
+}
 }

@@ -1,18 +1,18 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.shooter;
 
 import com.seattlesolvers.solverslib.command.CommandBase;
 
-public class IncreaseRPMCommand extends CommandBase {
+public class DecreaseRPMCommand extends CommandBase {
     private final ShooterSubsystem shooter;
 
-    public IncreaseRPMCommand(ShooterSubsystem s) {
+    public DecreaseRPMCommand(ShooterSubsystem s) {
         shooter = s;
         addRequirements(s);
     }
 
     @Override
     public void initialize() {
-        shooter.increaseRPM();
+        shooter.decreaseRPM();
     }
 
     @Override

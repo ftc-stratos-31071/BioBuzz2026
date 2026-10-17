@@ -1,18 +1,18 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.shooter;
 
 import com.seattlesolvers.solverslib.command.CommandBase;
 
-public class DecreaseHoodAngleCommand extends CommandBase {
+public class IncreaseHoodAngleCommand extends CommandBase {
     private final ShooterSubsystem shooter;
 
-    public DecreaseHoodAngleCommand(ShooterSubsystem s) {
+    public IncreaseHoodAngleCommand(ShooterSubsystem s) {
         shooter = s;
         addRequirements(s);
     }
 
     @Override
     public void initialize() {
-        shooter.decreaseHoodAngle();
+        shooter.toggleMotor();
     }
 
     @Override

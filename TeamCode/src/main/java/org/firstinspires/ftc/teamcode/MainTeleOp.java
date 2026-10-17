@@ -9,8 +9,9 @@ import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.seattlesolvers.solverslib.util.Timing;
-
 import java.util.concurrent.TimeUnit;
+
+import org.firstinspires.ftc.teamcode.shooter.*;
 
 @TeleOp(name = "Main TeleOp", group = "TeleOp")
 public class MainTeleOp extends CommandOpMode {

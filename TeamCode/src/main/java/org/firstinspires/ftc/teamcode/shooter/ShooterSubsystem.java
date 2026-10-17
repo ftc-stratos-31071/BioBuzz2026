@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.shooter;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.seattlesolvers.solverslib.command.CommandBase;
-import org.firstinspires.ftc.teamcode.ShooterSubsystem;
 
 public class ShootCommand extends CommandBase {
     private final ShooterSubsystem shooter;

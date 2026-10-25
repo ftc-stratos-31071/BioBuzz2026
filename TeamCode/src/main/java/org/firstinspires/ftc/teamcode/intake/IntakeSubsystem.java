@@ -20,4 +20,8 @@ public class IntakeSubsystem extends SubsystemBase {
         if (power) intake.set(1);
         else intake.set(0);
     }
+    public void setOuttake(boolean power) {
+        if (power) intake.set(-1);
+        else intake.set(0);
+    }
 }

@@ -33,36 +33,42 @@ public class MainTeleOp extends CommandOpMode {
         gamepad = new GamepadEx(gamepad1);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry()); // any telemetry updates will be sent to both telemetry and ftc dashboard - like hdmi splitter
 
-//        // SHOOTER
-//        shooter = new ShooterSubsystem(hardwareMap, "hood", "shooter", timer);
-//
-//        GamepadButton shootButton = new GamepadButton(gamepad, GamepadKeys.Button.Y);
-//        shootButton.whenPressed(new ShootCommand(shooter));
-//
-//        GamepadButton increaseRPMButton = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_RIGHT);
-//        increaseRPMButton.whenPressed(new IncreaseRPMCommand(shooter));
-//
-//        GamepadButton decreaseRPMButton = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_LEFT);
-//        decreaseRPMButton.whenPressed(new DecreaseRPMCommand(shooter));
-//
-//        // TURRET
-//        turret = new TurretSubsystem(hardwareMap, "turretRight", "turretLeft", "turretEncoder");
+        // SHOOTER
+        shooter = new ShooterSubsystem(hardwareMap, "hood", "shooter", timer);
+
+        // toggle shooter
+        GamepadButton shootButton = new GamepadButton(gamepad, GamepadKeys.Button.Y);
+        shootButton.whenPressed(new ShootCommand(shooter));
+
+        // increase rpm
+        GamepadButton increaseRPMButton = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_RIGHT);
+        increaseRPMButton.whenPressed(new IncreaseRPMCommand(shooter));
+
+        // decrease rpm
+        GamepadButton decreaseRPMButton = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_LEFT);
+        decreaseRPMButton.whenPressed(new DecreaseRPMCommand(shooter));
+
+        // increase hood angle
+        GamepadButton increaseHoodAngleButton = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_UP);
+        increaseHoodAngleButton.whenPressed(new IncreaseHoodAngleCommand(shooter));
+
+        // decrease hood angle
+        GamepadButton decreaseHoodAngleCommand = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_DOWN);
+        decreaseHoodAngleCommand.whenPressed(new DecreaseHoodAngleCommand(shooter));
+
+        // TURRET
+        turret = new TurretSubsystem(hardwareMap, "turretRight", "turretLeft", "turretEncoder");
 
         // DRIVETRAIN
         drivetrain = new DrivetrainSubsystem(hardwareMap, "fl", "fr", "bl", "br", gamepad);
+        // all controls already defined and checked for within class
 
         // INTAKE
         intake = new IntakeSubsystem(hardwareMap, "intake");
+
+        // intake on/off
         GamepadButton intakeButton = new GamepadButton(gamepad, GamepadKeys.Button.LEFT_BUMPER);
         intakeButton.whenPressed(new IntakeOnCommand(intake));
         intakeButton.whenReleased(new IntakeOffCommand(intake));
-
-//         runs every loop of scheduler
-        schedule(new RunCommand(() -> {
-            telemetry.addData("Running", shooter.isRunning());
-            telemetry.addData("Target RPM", shooter.getTargetRPM());
-            telemetry.addData("Measured RPM", shooter.getMeasuredRPM());
-            telemetry.update();
-        }));
     }
 }

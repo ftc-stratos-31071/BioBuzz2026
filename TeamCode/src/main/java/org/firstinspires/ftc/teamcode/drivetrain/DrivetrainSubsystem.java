@@ -13,10 +13,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private Motor backleft;
     private Motor backright;
     private final GamepadEx gamepad;
-    public static double frontleftPower;
-    public static double frontrightPower;
-    public static double backleftPower;
-    public static double backrightPower;
     public static boolean braking;
     public DrivetrainSubsystem(final HardwareMap hMap, final String frontleftID, final String frontrightID, final String backleftID, final String backrightID, final GamepadEx gamepad) {
         frontleft = new Motor(hMap, frontleftID);

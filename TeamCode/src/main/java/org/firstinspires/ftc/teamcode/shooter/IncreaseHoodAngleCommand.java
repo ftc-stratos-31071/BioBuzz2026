@@ -12,7 +12,7 @@ public class IncreaseHoodAngleCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        shooter.toggleMotor();
+        shooter.increaseHoodAngle();
     }
 
     @Override

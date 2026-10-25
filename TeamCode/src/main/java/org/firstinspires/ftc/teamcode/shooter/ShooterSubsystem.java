@@ -14,6 +14,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double RPM = 500;
     public static boolean motorRunning = false;
     public double servoAngle = 0;
+    public static double measuredRPM;
+
+    // PIDF variables for flywheel:
     public static double a_P = 0.002;
     public static double b_I = 0;
     public static double c_D = 0.01;
@@ -21,7 +24,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private double integral = 0;
     private double lastError = 0;
     private double lastTime = 0;
-    private Timing.Stopwatch timer;
+    private final Timing.Stopwatch timer;
     public ShooterSubsystem(final HardwareMap hMap, final String servoName, final String motorName, Timing.Stopwatch timer) {
         servo = new ServoEx(hMap, servoName, 180);
 
@@ -30,8 +33,6 @@ public class ShooterSubsystem extends SubsystemBase {
         motor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
 
         motor.resetEncoder();
-
-//        motor.setInverted(true);
 
         this.timer = timer;
     }
@@ -47,11 +48,7 @@ public class ShooterSubsystem extends SubsystemBase {
         integral += error * deltaTime;
         double derivative = (error - lastError) / deltaTime;
         lastError = error;
-////
-////        System.out.println(d_F * RPM);
-////        System.out.println(a_P * error);
-////        System.out.println(b_I * integral);
-//        System.out.println(c_D * derivative);
+
         double output = d_F * RPM + a_P * error + b_I * integral + c_D * derivative;
         System.out.println(output);
 
@@ -61,6 +58,8 @@ public class ShooterSubsystem extends SubsystemBase {
         } else {
             motor.stopMotor();
         }
+
+        measuredRPM = getMeasuredRPM(); // so i can see current rpm in ftc dashboard
     }
 
     public void toggleMotor() {

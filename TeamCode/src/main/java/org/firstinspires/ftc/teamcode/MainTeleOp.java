@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.RunCommand;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -12,6 +13,9 @@ import com.seattlesolvers.solverslib.util.Timing;
 import java.util.concurrent.TimeUnit;
 import org.firstinspires.ftc.teamcode.drivetrain.*;
 import org.firstinspires.ftc.teamcode.intake.*;
+import org.firstinspires.ftc.teamcode.ramp.RampDownCommand;
+import org.firstinspires.ftc.teamcode.ramp.RampSubsystem;
+import org.firstinspires.ftc.teamcode.ramp.RampUpCommand;
 import org.firstinspires.ftc.teamcode.shooter.*;
 import org.firstinspires.ftc.teamcode.turret.*;
 
@@ -75,5 +79,11 @@ public class MainTeleOp extends CommandOpMode {
         GamepadButton outtakeButton = new GamepadButton(gamepad, GamepadKeys.Button.B);
         outtakeButton.whenPressed(new OuttakeOnCommand(intake));
         outtakeButton.whenReleased(new OuttakeOffCommand(intake));
+
+        // RAMP
+        RampSubsystem ramp = new RampSubsystem(hardwareMap, "ramp");
+        GamepadButton rampButton = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
+        rampButton.whenPressed(new RampDownCommand(ramp));
+        rampButton.whenReleased(new RampUpCommand(ramp));
     }
 }

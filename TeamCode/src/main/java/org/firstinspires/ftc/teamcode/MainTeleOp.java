@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.intake.*;
 import org.firstinspires.ftc.teamcode.ramp.RampDownCommand;
 import org.firstinspires.ftc.teamcode.ramp.RampSubsystem;
 import org.firstinspires.ftc.teamcode.ramp.RampUpCommand;
+import org.firstinspires.ftc.teamcode.transfer.*;
 import org.firstinspires.ftc.teamcode.shooter.*;
 import org.firstinspires.ftc.teamcode.turret.*;
 
@@ -85,5 +86,18 @@ public class MainTeleOp extends CommandOpMode {
         GamepadButton rampButton = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
         rampButton.whenPressed(new RampDownCommand(ramp));
         rampButton.whenReleased(new RampUpCommand(ramp));
+
+        // TRANSFER
+        TransferSubsystem transfer = new TransferSubsystem(hardwareMap, "transfer");
+
+        // transfer on/off
+        GamepadButton transferButton = new GamepadButton(gamepad, GamepadKeys.Button.A);
+        transferButton.whenPressed(new TransferOnCommand(transfer));
+        transferButton.whenReleased(new TransferOffCommand(transfer));
+
+        // transfer out on/off
+        GamepadButton transferOutButton = new GamepadButton(gamepad, GamepadKeys.Button.X);
+        transferOutButton.whenPressed(new TransferOutOnCommand(transfer));
+        transferOutButton.whenReleased(new TransferOutOffCommand(transfer));
     }
 }

@@ -20,13 +20,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
         backleft = new Motor(hMap, backleftID);
         backright = new Motor(hMap, backrightID);
 
+        frontleft.setInverted(false);
+        backleft.setInverted(false);
+
         this.gamepad = gamepad;
     }
 
     @Override
     public void periodic() {
         // left stick - driving/strafing, right stick - turning
-        double y = -gamepad.getLeftY();  // y stick is reversed
+        double y = gamepad.getLeftY();  // y stick is reversed
         double x = gamepad.getLeftX();;   // strafing
         double rx = gamepad.getRightX(); // rotating
 

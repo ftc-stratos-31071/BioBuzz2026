@@ -26,7 +26,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // left stick - driving/strafing, right stick - turning
-        double y = -gamepad.getLeftY();  // y stick is reversed
+        double y = gamepad.getLeftY();   // GamepadEx already flips the y stick (up = positive)
         double x = gamepad.getLeftX();;   // strafing
         double rx = gamepad.getRightX(); // rotating
 

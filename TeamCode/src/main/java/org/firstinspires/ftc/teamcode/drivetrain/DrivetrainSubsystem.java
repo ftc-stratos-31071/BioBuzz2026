@@ -20,8 +20,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         backleft = new Motor(hMap, backleftID);
         backright = new Motor(hMap, backrightID);
 
-        frontleft.setInverted(false);
-        backleft.setInverted(false);
+        frontleft.setInverted(true);
+        backleft.setInverted(true);
+        backright.setInverted(true);
 
         this.gamepad = gamepad;
     }

@@ -68,7 +68,14 @@ public class MainTeleOp extends CommandOpMode {
         drivetrain = new DrivetrainSubsystem(hardwareMap, "FL", "FR", "BL", "BR", gamepad);
         // all controls already defined and checked for within class
 
-        // INTAKE
+        // RAMP
+        RampSubsystem ramp = new RampSubsystem(hardwareMap, "ramp");
+        GamepadButton rampButton = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
+        rampButton.whenPressed(new RampDownCommand(ramp));
+        rampButton.whenReleased(new RampUpCommand(ramp));
+
+
+        // INTAKE - run intake independent of transfer
         intake = new IntakeSubsystem(hardwareMap, "intake");
 
         // intake on/off
@@ -76,28 +83,17 @@ public class MainTeleOp extends CommandOpMode {
         intakeButton.whenPressed(new IntakeOnCommand(intake));
         intakeButton.whenReleased(new IntakeOffCommand(intake));
 
-        // outtake on/off
-        GamepadButton outtakeButton = new GamepadButton(gamepad, GamepadKeys.Button.B);
-        outtakeButton.whenPressed(new OuttakeOnCommand(intake));
-        outtakeButton.whenReleased(new OuttakeOffCommand(intake));
-
-        // RAMP
-        RampSubsystem ramp = new RampSubsystem(hardwareMap, "ramp");
-        GamepadButton rampButton = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
-        rampButton.whenPressed(new RampDownCommand(ramp));
-        rampButton.whenReleased(new RampUpCommand(ramp));
-
-        // TRANSFER
+        // TRANSFER - all transfer actions do equivalent for intake - they run in parallel
         TransferSubsystem transfer = new TransferSubsystem(hardwareMap, "transfer");
 
-        // transfer on/off
+        // transfer+intake on/off
         GamepadButton transferButton = new GamepadButton(gamepad, GamepadKeys.Button.A);
-        transferButton.whenPressed(new TransferOnCommand(transfer));
-        transferButton.whenReleased(new TransferOffCommand(transfer));
+        transferButton.whenPressed(new TransferOnCommand(transfer, intake));
+        transferButton.whenReleased(new TransferOffCommand(transfer, intake));
 
-        // transfer out on/off
-        GamepadButton transferOutButton = new GamepadButton(gamepad, GamepadKeys.Button.X);
-        transferOutButton.whenPressed(new TransferOutOnCommand(transfer));
-        transferOutButton.whenReleased(new TransferOutOffCommand(transfer));
+        // transfer+intake out on/off
+        GamepadButton transferOutButton = new GamepadButton(gamepad, GamepadKeys.Button.B);
+        transferOutButton.whenPressed(new TransferOutOnCommand(transfer, intake));
+        transferOutButton.whenReleased(new TransferOutOffCommand(transfer, intake));
     }
 }

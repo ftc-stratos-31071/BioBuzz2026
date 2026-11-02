@@ -12,10 +12,6 @@ public class IntakeSubsystem extends SubsystemBase {
         intake = new Motor(hMap, intakeID);
     }
 
-//    @Override
-//    public void periodic() {
-//    }
-
     public void setIntake(boolean power) { // toggle intake according to boolean "power"
         if (power) intake.set(1);
         else intake.set(0);

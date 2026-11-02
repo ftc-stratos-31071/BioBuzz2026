@@ -33,7 +33,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontleftPower = (y + x + rx) / denominator;
         double backleftPower = (y - x + rx) / denominator;
-        double frontrightPower = (y - x - rx) / denominator;
+        double frontrightPower = -1 * (y - x - rx) / denominator;
         double backrightPower = (y + x - rx) / denominator;
 
         frontleft.set(frontleftPower);

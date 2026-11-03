@@ -18,6 +18,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.6.0'
     implementation "org.solverslib:core:0.3.6" // core
-    implementation "org.solverslib:pedroPathing:0.3.6" // pedroPathing
+    implementation "org.solverslib:pedroPathing:0.3.6" // pedroPathing extension for solvers lib
+    implementation 'com.pedropathing:revhub:3.0.2' // pedroPathing
+    implementation 'com.pedropathing:tuning:1.0.3' // pedroPathing
 }
 

@@ -13,6 +13,7 @@ import com.seattlesolvers.solverslib.util.Timing;
 import java.util.concurrent.TimeUnit;
 import org.firstinspires.ftc.teamcode.drivetrain.*;
 import org.firstinspires.ftc.teamcode.intake.*;
+import org.firstinspires.ftc.teamcode.localization.LocalizationSubsystem;
 import org.firstinspires.ftc.teamcode.ramp.RampDownCommand;
 import org.firstinspires.ftc.teamcode.ramp.RampSubsystem;
 import org.firstinspires.ftc.teamcode.ramp.RampUpCommand;
@@ -29,6 +30,7 @@ public class MainTeleOp extends CommandOpMode {
     private IntakeSubsystem intake;
     private GamepadEx gamepad;
     public Timing.Stopwatch timer;
+    private LocalizationSubsystem localization;
 
     @Override
     public void initialize() {
@@ -64,8 +66,11 @@ public class MainTeleOp extends CommandOpMode {
         // TURRET
 //        turret = new TurretSubsystem(hardwareMap, "turretRight", "turretLeft", "turretEncoder");
 
+        // LOCALIZATION
+        localization = new LocalizationSubsystem(hardwareMap, "pinpoint", 0, 0, 0, false);
+
         // DRIVETRAIN
-        drivetrain = new DrivetrainSubsystem(hardwareMap, "FL", "FR", "BL", "BR", gamepad);
+        drivetrain = new DrivetrainSubsystem(hardwareMap, "FL", "FR", "BL", "BR", gamepad, localization);
         // all controls already defined and checked for within class
 
         // RAMP

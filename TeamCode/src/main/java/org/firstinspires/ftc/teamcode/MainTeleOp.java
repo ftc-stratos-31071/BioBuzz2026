@@ -100,5 +100,11 @@ public class MainTeleOp extends CommandOpMode {
         GamepadButton transferOutButton = new GamepadButton(gamepad, GamepadKeys.Button.B);
         transferOutButton.whenPressed(new TransferOutOnCommand(transfer, intake));
         transferOutButton.whenReleased(new TransferOutOffCommand(transfer, intake));
+
+        // RAMP
+        RampSubsystem ramp = new RampSubsystem(hardwareMap, "ramp");
+        GamepadButton rampButton = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
+        rampButton.whenPressed(new RampDownCommand(ramp));
+        rampButton.whenReleased(new RampUpCommand(ramp));
     }
 }

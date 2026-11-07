@@ -4,8 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.RunCommand;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
@@ -13,10 +11,8 @@ import com.seattlesolvers.solverslib.util.Timing;
 import java.util.concurrent.TimeUnit;
 import org.firstinspires.ftc.teamcode.drivetrain.*;
 import org.firstinspires.ftc.teamcode.intake.*;
-import org.firstinspires.ftc.teamcode.localization.LocalizationSubsystem;
-import org.firstinspires.ftc.teamcode.ramp.RampDownCommand;
-import org.firstinspires.ftc.teamcode.ramp.RampSubsystem;
-import org.firstinspires.ftc.teamcode.ramp.RampUpCommand;
+import org.firstinspires.ftc.teamcode.localization.*;
+import org.firstinspires.ftc.teamcode.ramp.*;
 import org.firstinspires.ftc.teamcode.transfer.*;
 import org.firstinspires.ftc.teamcode.shooter.*;
 import org.firstinspires.ftc.teamcode.turret.*;
@@ -27,6 +23,7 @@ public class MainTeleOp extends CommandOpMode {
     private ShooterSubsystem shooter;
     private TurretSubsystem turret;
     private DrivetrainSubsystem drivetrain;
+    private RampSubsystem ramp;
     private IntakeSubsystem intake;
     private GamepadEx gamepad;
     public Timing.Stopwatch timer;
@@ -68,17 +65,18 @@ public class MainTeleOp extends CommandOpMode {
 
         // LOCALIZATION
         localization = new LocalizationSubsystem(hardwareMap, "pinpoint", 0, 0, 0, false);
+        GamepadButton resetLocationButton = new GamepadButton(gamepad, GamepadKeys.Button.OPTIONS);
+        resetLocationButton.whenPressed(new ResetPositionCommand(localization));
 
         // DRIVETRAIN
         drivetrain = new DrivetrainSubsystem(hardwareMap, "FL", "FR", "BL", "BR", gamepad, localization);
         // all controls already defined and checked for within class
 
         // RAMP
-        RampSubsystem ramp = new RampSubsystem(hardwareMap, "ramp");
+        ramp = new RampSubsystem(hardwareMap, "ramp");
         GamepadButton rampButton = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
         rampButton.whenPressed(new RampDownCommand(ramp));
         rampButton.whenReleased(new RampUpCommand(ramp));
-
 
         // INTAKE - run intake independent of transfer
         intake = new IntakeSubsystem(hardwareMap, "intake");
@@ -100,11 +98,5 @@ public class MainTeleOp extends CommandOpMode {
         GamepadButton transferOutButton = new GamepadButton(gamepad, GamepadKeys.Button.B);
         transferOutButton.whenPressed(new TransferOutOnCommand(transfer, intake));
         transferOutButton.whenReleased(new TransferOutOffCommand(transfer, intake));
-
-        // RAMP
-        RampSubsystem ramp = new RampSubsystem(hardwareMap, "ramp");
-        GamepadButton rampButton = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
-        rampButton.whenPressed(new RampDownCommand(ramp));
-        rampButton.whenReleased(new RampUpCommand(ramp));
     }
 }

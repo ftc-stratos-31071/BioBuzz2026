@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.localization;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver; // if this import fails, copy goBILDA's GoBildaPinpointDriver.java into TeamCode and import that instead
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
@@ -70,6 +72,13 @@ public class LocalizationSubsystem extends SubsystemBase {
         y = p.getY(DistanceUnit.INCH);
         heading = wrapRad(p.getHeading(AngleUnit.RADIANS));
         headingDeg = Math.round(heading * 180 / Math.PI);
+
+        // send telemetry to ftc dashboard
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.put("X", x);
+        packet.put("Y", y);
+        packet.put("Heading (Deg)", headingDeg);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     // ---------------- getters ----------------

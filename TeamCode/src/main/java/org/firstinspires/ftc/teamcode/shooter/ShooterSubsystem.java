@@ -27,6 +27,12 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double b_I = 0;
     public static double c_D = 0;
     public static double d_F = 0;
+
+    // tuning helpers (change live in FTC Dashboard):
+    public static boolean MOTOR2_REVERSED = false; // flip if the two flywheel motors fight each other
+    public static boolean RPM_REVERSED = true;     // flip if "shooter rpm" reads negative while spinning forward
+    private double output = 0;                     // power actually sent to the motors (for telemetry)
+    private boolean wasRunning = false;
     private double integral = 0;
     private double lastError = 0;
     private double lastTime = 0;
@@ -53,6 +59,16 @@ public class ShooterSubsystem extends SubsystemBase {
     public void periodic() {
         if (motorRunning) {
             timer.resume(); // in case it was paused
+            motor2.setInverted(MOTOR2_REVERSED);
+
+            // flywheel just turned on: clear old PID memory so it doesn't jump
+            if (!wasRunning) {
+                integral = 0;
+                lastError = RPM - getMeasuredRPM(); // avoids a derivative spike on the first loop
+                lastTime = timer.elapsedTime();
+                wasRunning = true;
+            }
+
             // PIDF STUFF:
             double error = RPM - getMeasuredRPM();
 
@@ -65,7 +81,8 @@ public class ShooterSubsystem extends SubsystemBase {
             double derivative = (error - lastError) / deltaTime;
             lastError = error;
 
-            double output = d_F * RPM + a_P * error + b_I * integral + c_D * derivative;
+            output = d_F * RPM + a_P * error + b_I * integral + c_D * derivative;
+            output = Math.max(-1, Math.min(1, output)); // motors only accept -1 to 1
 
             motor1.set(output);
             motor2.set(output);
@@ -73,6 +90,8 @@ public class ShooterSubsystem extends SubsystemBase {
             motor1.stopMotor();
             motor2.stopMotor();
             timer.pause();
+            output = 0;
+            wasRunning = false;
         }
 
         measuredRPM = getMeasuredRPM(); // so i can see current rpm in ftc dashboard
@@ -80,6 +99,7 @@ public class ShooterSubsystem extends SubsystemBase {
         TelemetryPacket packet = new TelemetryPacket();
         packet.put("shooter rpm: ", measuredRPM);
         packet.put("intended rpm: ", RPM);
+        packet.put("shooter power: ", output); // stuck at 1.0 = maxed out, something is wrong
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
@@ -98,7 +118,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public double getMeasuredRPM() {
-        return -(motor1.getVelocity() * 60.0) / 28;
+        double rpm = (motor1.getVelocity() * 60.0) / 28;
+        return RPM_REVERSED ? -rpm : rpm;
     }
 
     public void increaseRPM() {

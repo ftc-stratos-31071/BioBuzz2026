@@ -21,10 +21,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double measuredRPM;
 
     // PIDF variables for flywheel:
-    public double a_P = 0.002;
-    public double b_I = 0;
-    public double c_D = 0.01;
-    public double d_F = 0.0003;
+    public static double a_P = 0.002;
+    public static double b_I = 0;
+    public static double c_D = 0.01;
+    public static double d_F = 0.0003;
     private double integral = 0;
     private double lastError = 0;
     private double lastTime = 0;
@@ -49,33 +49,31 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        if (motorRunning) {
-//            timer.resume(); // in case it was paused
-//            // PIDF STUFF:
-//            double error = RPM - getMeasuredRPM();
-//
-//            double elapsed = timer.elapsedTime();
-//            double deltaTime = elapsed - lastTime;
-//            if (deltaTime == 0) deltaTime = 0.0001; // just in case so that we don't get undefined results if two loops run on same millisecond and therefore delta time = 0
-//            lastTime = elapsed;
-//
-//            integral += error * deltaTime;
-//            double derivative = (error - lastError) / deltaTime;
-//            lastError = error;
-//
-//            double output = d_F * RPM + a_P * error + b_I * integral + c_D * derivative;
-//
-//            motor.set(output);
-//        } else {
-//            motor.stopMotor();
-//            timer.pause();
-//        }
-//
-        motor1.set(rawPower);
-        motor2.set(-rawPower);
+        if (motorRunning) {
+            timer.resume(); // in case it was paused
+            // PIDF STUFF:
+            double error = RPM - getMeasuredRPM();
+
+            double elapsed = timer.elapsedTime();
+            double deltaTime = elapsed - lastTime;
+            if (deltaTime == 0) deltaTime = 0.0001; // just in case so that we don't get undefined results if two loops run on same millisecond and therefore delta time = 0
+            lastTime = elapsed;
+
+            integral += error * deltaTime;
+            double derivative = (error - lastError) / deltaTime;
+            lastError = error;
+
+            double output = d_F * RPM + a_P * error + b_I * integral + c_D * derivative;
+
+            motor1.set(output);
+            motor2.set(output);
+        } else {
+            motor1.stopMotor();
+            motor2.stopMotor();
+            timer.pause();
+        }
 
         measuredRPM = getMeasuredRPM(); // so i can see current rpm in ftc dashboard
-
     }
 
     public void toggleMotor() {

@@ -9,8 +9,12 @@ import com.seattlesolvers.solverslib.util.Timing;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
+    // temp vars:
+    public static double rawPower = 0;
+
     private final ServoEx servo;
-    public final MotorEx motor;
+    public final MotorEx motor1;
+    public final MotorEx motor2;
     public static double RPM = 500;
     public static boolean motorRunning = false;
     public static double servoAngle = 0;
@@ -25,43 +29,53 @@ public class ShooterSubsystem extends SubsystemBase {
     private double lastError = 0;
     private double lastTime = 0;
     private final Timing.Stopwatch timer;
-    public ShooterSubsystem(final HardwareMap hMap, final String servoName, final String motorName, Timing.Stopwatch timer) {
+    public ShooterSubsystem(final HardwareMap hMap, final String servoName, final String motorName1, final String motorName2, Timing.Stopwatch timer) {
         servo = new ServoEx(hMap, servoName, 180);
 
-        motor = new MotorEx(hMap, motorName);
-        motor.setRunMode(MotorEx.RunMode.RawPower);
-        motor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        motor1 = new MotorEx(hMap, motorName1);
+        motor1.setRunMode(MotorEx.RunMode.RawPower);
+        motor1.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
 
-        motor.resetEncoder();
+        motor2 = new MotorEx(hMap, motorName1);
+        motor2.setRunMode(MotorEx.RunMode.RawPower);
+        motor2.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+
+        motor1.resetEncoder();
+
+        motor2.resetEncoder();
 
         this.timer = timer;
     }
 
     @Override
     public void periodic() {
-        if (motorRunning) {
-            timer.pause(); // in case it was paused
-            // PIDF STUFF:
-            double error = RPM - getMeasuredRPM();
-
-            double elapsed = timer.elapsedTime();
-            double deltaTime = elapsed - lastTime;
-            if (deltaTime == 0) deltaTime = 0.0001; // just in case so that we don't get undefined results if two loops run on same millisecond and therefore delta time = 0
-            lastTime = elapsed;
-
-            integral += error * deltaTime;
-            double derivative = (error - lastError) / deltaTime;
-            lastError = error;
-
-            double output = d_F * RPM + a_P * error + b_I * integral + c_D * derivative;
-
-            motor.set(output);
-        } else {
-            motor.stopMotor();
-            timer.pause();
-        }
+//        if (motorRunning) {
+//            timer.resume(); // in case it was paused
+//            // PIDF STUFF:
+//            double error = RPM - getMeasuredRPM();
+//
+//            double elapsed = timer.elapsedTime();
+//            double deltaTime = elapsed - lastTime;
+//            if (deltaTime == 0) deltaTime = 0.0001; // just in case so that we don't get undefined results if two loops run on same millisecond and therefore delta time = 0
+//            lastTime = elapsed;
+//
+//            integral += error * deltaTime;
+//            double derivative = (error - lastError) / deltaTime;
+//            lastError = error;
+//
+//            double output = d_F * RPM + a_P * error + b_I * integral + c_D * derivative;
+//
+//            motor.set(output);
+//        } else {
+//            motor.stopMotor();
+//            timer.pause();
+//        }
+//
+        motor1.set(rawPower);
+        motor2.set(-rawPower);
 
         measuredRPM = getMeasuredRPM(); // so i can see current rpm in ftc dashboard
+
     }
 
     public void toggleMotor() {
@@ -79,7 +93,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public double getMeasuredRPM() {
-        return -(motor.getVelocity() * 60.0) / 28;
+        return -(motor1.getVelocity() * 60.0) / 28;
     }
 
     public void increaseRPM() {

@@ -17,16 +17,16 @@ public class ShooterSubsystem extends SubsystemBase {
     private final ServoEx servo;
     public final MotorEx motor1;
     public final MotorEx motor2;
-    public static double RPM = 500;
+    public static double RPM = 4000;
     public static boolean motorRunning = false;
     public static double servoAngle = 0;
     public double measuredRPM;
 
     // PIDF variables for flywheel:
-    public static double a_P = 0;
+    public static double a_P = 0.0005;
     public static double b_I = 0;
     public static double c_D = 0;
-    public static double d_F = 0;
+    public static double d_F = 0.00023;
 
     // tuning helpers (change live in FTC Dashboard):
     public static boolean MOTOR2_REVERSED = false; // flip if the two flywheel motors fight each other

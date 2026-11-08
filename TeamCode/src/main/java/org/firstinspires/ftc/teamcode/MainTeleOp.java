@@ -38,7 +38,7 @@ public class MainTeleOp extends CommandOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry()); // any telemetry updates will be sent to both telemetry and ftc dashboard - like hdmi splitter
 
         // SHOOTER
-        shooter = new ShooterSubsystem(hardwareMap, "hood", "shooter", timer);
+        shooter = new ShooterSubsystem(hardwareMap, "hood", "shooterL", "shooterR", timer);
 //
 //        // toggle shooter
         GamepadButton shootButton = new GamepadButton(gamepad, GamepadKeys.Button.Y);

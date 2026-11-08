@@ -36,7 +36,7 @@ public class ShooterSubsystem extends SubsystemBase {
         motor1.setRunMode(MotorEx.RunMode.RawPower);
         motor1.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
 
-        motor2 = new MotorEx(hMap, motorName1);
+        motor2 = new MotorEx(hMap, motorName2);
         motor2.setRunMode(MotorEx.RunMode.RawPower);
         motor2.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
 

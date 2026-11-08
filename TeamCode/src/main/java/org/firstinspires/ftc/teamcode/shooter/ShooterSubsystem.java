@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.shooter;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
@@ -18,13 +20,13 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double RPM = 500;
     public static boolean motorRunning = false;
     public static double servoAngle = 0;
-    public static double measuredRPM;
+    public double measuredRPM;
 
     // PIDF variables for flywheel:
-    public static double a_P = 0.002;
+    public static double a_P = 0;
     public static double b_I = 0;
-    public static double c_D = 0.01;
-    public static double d_F = 0.0003;
+    public static double c_D = 0;
+    public static double d_F = 0;
     private double integral = 0;
     private double lastError = 0;
     private double lastTime = 0;
@@ -74,6 +76,11 @@ public class ShooterSubsystem extends SubsystemBase {
         }
 
         measuredRPM = getMeasuredRPM(); // so i can see current rpm in ftc dashboard
+
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.put("shooter rpm: ", measuredRPM);
+        packet.put("intended rpm: ", RPM);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     public void toggleMotor() {

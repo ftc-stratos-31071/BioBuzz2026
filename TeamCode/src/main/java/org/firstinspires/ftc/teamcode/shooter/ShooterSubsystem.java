@@ -84,7 +84,7 @@ public class ShooterSubsystem extends SubsystemBase {
             output = d_F * RPM + a_P * error + b_I * integral + c_D * derivative;
             output = Math.max(-1, Math.min(1, output)); // motors only accept -1 to 1
 
-            motor1.set(output);
+            motor1.set(-output);
             motor2.set(output);
         } else {
             motor1.stopMotor();

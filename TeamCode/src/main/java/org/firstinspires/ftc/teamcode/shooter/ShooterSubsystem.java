@@ -67,7 +67,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             double output = d_F * RPM + a_P * error + b_I * integral + c_D * derivative;
 
-            motor1.set(output);
+            motor1.set(-output);
             motor2.set(output);
         } else {
             motor1.stopMotor();

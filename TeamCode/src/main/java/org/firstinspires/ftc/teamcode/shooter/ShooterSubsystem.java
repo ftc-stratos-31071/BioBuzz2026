@@ -17,7 +17,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private final ServoEx servo;
     public final MotorEx motor1;
     public final MotorEx motor2;
-    public static double RPM = 4000;
+    public static double RPM = 3000;
     public static boolean motorRunning = false;
     public static double servoAngle = 0;
     public double measuredRPM;
@@ -84,7 +84,7 @@ public class ShooterSubsystem extends SubsystemBase {
             output = d_F * RPM + a_P * error + b_I * integral + c_D * derivative;
             output = Math.max(-1, Math.min(1, output)); // motors only accept -1 to 1
 
-            motor1.set(-output);
+            motor1.set(output);
             motor2.set(output);
         } else {
             motor1.stopMotor();

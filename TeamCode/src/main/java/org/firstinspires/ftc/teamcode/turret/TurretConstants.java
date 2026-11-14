@@ -4,10 +4,11 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class TurretConstants {
-    public static double Q1_X = 0, Q1_Y = 0;
-    public static double Q2_X = 0, Q2_Y = 0;
-    public static double Q3_X = 0, Q3_Y = 0;
-    public static double Q4_X = 0, Q4_Y = 0;
+    public static boolean RED_ALLIANCE = true;
+
+    // cell centers from the manual (inches from field center, +x toward blue, +y away from audience)
+    public static double CELL_X = 12.75;
+    public static double CELL_Y = 13.4;
 
     public static double FORWARD_DEG = 0;
     public static boolean REVERSED = false;

@@ -6,36 +6,32 @@ import com.seattlesolvers.solverslib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.localization.LocalizationSubsystem;
 
+// keeps the turret pointed at our up cell the whole match
 public class TrackTurretCommand extends CommandBase {
     private final LocalizationSubsystem localization;
+    private final HiveSubsystem hive;
 
-    public TrackTurretCommand(TurretSubsystem turret, LocalizationSubsystem localization) {
+    public TrackTurretCommand(TurretSubsystem turret, LocalizationSubsystem localization, HiveSubsystem hive) {
         this.localization = localization;
+        this.hive = hive;
         addRequirements(turret);
     }
 
     @Override
     public void execute() {
-        // pinpoint
-        double x = localization.getX();
-        double y = localization.getY();
-        double[] target = targetFor(x, y);
+        double dx = hive.targetX() - localization.getX();
+        double dy = hive.targetY() - localization.getY();
 
-        double aim = Math.toDegrees(Math.atan2(target[1] - y, target[0] - x) - localization.getHeadingRad());
+        // minus heading so it stays locked on while the robot turns
+        double aim = Math.toDegrees(Math.atan2(dy, dx) - localization.getHeadingRad());
         aim = Math.max(MIN_DEG, Math.min(MAX_DEG, wrap(aim)));
 
         double command = (REVERSED ? -aim : aim) + FORWARD_DEG;
-        TurretSubsystem.angle = ((command % 360) + 360) % 360; // keeps ts between 0 and 360
+        TurretSubsystem.angle = ((command % 360) + 360) % 360; // keeps it between 0 and 360
     }
 
-    private double[] targetFor(double x, double y) {
-        // Q1 = top right, Q2 = top left, Q3 = bottom left, Q4 = bottom right
-        if (x >= 0) return y >= 0 ? new double[]{Q1_X, Q1_Y} : new double[]{Q4_X, Q4_Y};
-        return y >= 0 ? new double[]{Q2_X, Q2_Y} : new double[]{Q3_X, Q3_Y};
-    }
-
+    // keeps angle between -180 and 180
     private double wrap(double deg) {
-        // keeps angle between -180 and 180
         while (deg > 180) deg -= 360;
         while (deg <= -180) deg += 360;
         return deg;

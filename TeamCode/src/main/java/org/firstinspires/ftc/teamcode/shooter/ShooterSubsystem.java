@@ -14,7 +14,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final ServoEx servo;
     public final MotorEx motor1;
-    public final MotorEx motor2;
     public static double RPM = 500;
     public static boolean motorRunning = false;
     public static double servoAngle = 0;
@@ -29,20 +28,15 @@ public class ShooterSubsystem extends SubsystemBase {
     private double lastError = 0;
     private double lastTime = 0;
     private final Timing.Stopwatch timer;
-    public ShooterSubsystem(final HardwareMap hMap, final String servoName, final String motorName1, final String motorName2, Timing.Stopwatch timer) {
+    public ShooterSubsystem(final HardwareMap hMap, final String servoName, final String motorName1, Timing.Stopwatch timer) {
         servo = new ServoEx(hMap, servoName, 180);
 
         motor1 = new MotorEx(hMap, motorName1);
         motor1.setRunMode(MotorEx.RunMode.RawPower);
         motor1.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-
-        motor2 = new MotorEx(hMap, motorName2);
-        motor2.setRunMode(MotorEx.RunMode.RawPower);
-        motor2.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        motor1.setInverted(true);
 
         motor1.resetEncoder();
-
-        motor2.resetEncoder();
 
         this.timer = timer;
     }
@@ -66,10 +60,8 @@ public class ShooterSubsystem extends SubsystemBase {
             double output = d_F * RPM + a_P * error + b_I * integral + c_D * derivative;
 
             motor1.set(output);
-            motor2.set(output);
         } else {
             motor1.stopMotor();
-            motor2.stopMotor();
             timer.pause();
         }
 

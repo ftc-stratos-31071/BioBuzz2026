@@ -10,6 +10,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final Motor intake;
     public IntakeSubsystem(final HardwareMap hMap, final String intakeID) {
         intake = new Motor(hMap, intakeID);
+        intake.setInverted(true);
     }
 
     public void setIntake(boolean power) { // toggle intake according to boolean "power"

@@ -1,29 +1,34 @@
 package org.firstinspires.ftc.teamcode.shooter;
 
-import com.acmerobotics.dashboard.config.Config;
+import android.provider.Settings;
+
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.configurables.annotations.Sorter;
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
+import com.seattlesolvers.solverslib.util.TelemetryData;
 import com.seattlesolvers.solverslib.util.Timing;
 
-@Config
+@Configurable
 public class ShooterSubsystem extends SubsystemBase {
-    // temp vars:
-    public static double rawPower = 0;
-
     private final ServoEx servo;
     public final MotorEx motor1;
-    public static double RPM = 500;
+    public static double target_RPM = 500;
     public static boolean motorRunning = false;
-    public static double servoAngle = 0;
-    public static double measuredRPM;
+    public double servoAngle = 0;
 
     // PIDF variables for flywheel:
-    public static double a_P = 0.002;
-    public static double b_I = 0;
-    public static double c_D = 0.01;
-    public static double d_F = 0.0003;
+    @Sorter(sort = 0)
+    public static double kP = 0.002;
+    @Sorter(sort = 1)
+    public static double kI = 0;
+    @Sorter(sort = 2)
+    public static double kD = 0.01;
+    @Sorter(sort = 3)
+    public static double kF = 0.0003;
     private double integral = 0;
     private double lastError = 0;
     private double lastTime = 0;
@@ -46,7 +51,7 @@ public class ShooterSubsystem extends SubsystemBase {
         if (motorRunning) {
             timer.resume(); // in case it was paused
             // PIDF STUFF:
-            double error = RPM - getMeasuredRPM();
+            double error = target_RPM - getMeasuredRPM();
 
             double elapsed = timer.elapsedTime();
             double deltaTime = elapsed - lastTime;
@@ -57,7 +62,7 @@ public class ShooterSubsystem extends SubsystemBase {
             double derivative = (error - lastError) / deltaTime;
             lastError = error;
 
-            double output = d_F * RPM + a_P * error + b_I * integral + c_D * derivative;
+            double output = kF * target_RPM + kP * error + kI * integral + kD * derivative;
 
             motor1.set(output);
         } else {
@@ -65,7 +70,9 @@ public class ShooterSubsystem extends SubsystemBase {
             timer.pause();
         }
 
-        measuredRPM = getMeasuredRPM(); // so i can see current rpm in ftc dashboard
+        PanelsTelemetry.INSTANCE.getTelemetry().addData("target rpm", target_RPM);
+        PanelsTelemetry.INSTANCE.getTelemetry().addData("measured rpm", getMeasuredRPM());
+        PanelsTelemetry.INSTANCE.getTelemetry().update();
     }
 
     public void toggleMotor() {
@@ -79,7 +86,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public double getTargetRPM() {
-        return motorRunning ? RPM : 0;
+        return motorRunning ? target_RPM : 0;
     }
 
     public double getMeasuredRPM() {
@@ -87,11 +94,11 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void increaseRPM() {
-        RPM += 100;
+        target_RPM += 100;
     }
 
     public void decreaseRPM() {
-        RPM -= 100;
+        target_RPM -= 100;
     }
 
     public void increaseHoodAngle() {

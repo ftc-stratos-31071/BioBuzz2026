@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.localization;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import android.provider.Settings;
+
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver; // if this import fails, copy goBILDA's GoBildaPinpointDriver.java into TeamCode and import that instead
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
@@ -14,7 +14,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 // uses gobilda pinpoint module: 2 dead wheels (field coords: inches) and imu for heading (radians)
 // +x is forward and +y is left - this is gobilda pinpoint standards
 
-@Config
 public class LocalizationSubsystem extends SubsystemBase {
 
     // instructions for calculating offsets (& documentation for the pinpoint module): https://www.gobilda.com/content/user_manuals/3110-0002-0001_user-guide.pdf
@@ -73,12 +72,10 @@ public class LocalizationSubsystem extends SubsystemBase {
         heading = wrapRad(p.getHeading(AngleUnit.RADIANS));
         headingDeg = Math.round(heading * 180 / Math.PI);
 
-        // send telemetry to ftc dashboard
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.put("X", x);
-        packet.put("Y", y);
-        packet.put("Heading (Deg)", headingDeg);
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        PanelsTelemetry.INSTANCE.getTelemetry().addData("X", x);
+        PanelsTelemetry.INSTANCE.getTelemetry().addData("Y", y);
+        PanelsTelemetry.INSTANCE.getTelemetry().addData("Heading", headingDeg);
+        PanelsTelemetry.INSTANCE.getTelemetry().update();
     }
 
     // ---------------- getters ----------------

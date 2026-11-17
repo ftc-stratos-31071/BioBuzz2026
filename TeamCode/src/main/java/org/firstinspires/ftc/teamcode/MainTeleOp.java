@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
@@ -35,7 +33,6 @@ public class MainTeleOp extends CommandOpMode {
         timer.start();
 
         gamepad = new GamepadEx(gamepad1);
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry()); // any telemetry updates will be sent to both telemetry and ftc dashboard - like hdmi splitter
 
         // SHOOTER
         shooter = new ShooterSubsystem(hardwareMap, "hood", "shooterL", timer);

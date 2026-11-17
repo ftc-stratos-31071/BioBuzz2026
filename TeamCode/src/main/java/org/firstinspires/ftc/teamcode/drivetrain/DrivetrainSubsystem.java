@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.drivetrain;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -8,7 +7,6 @@ import com.seattlesolvers.solverslib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.teamcode.localization.LocalizationSubsystem;
 
-@Config
 public class DrivetrainSubsystem extends SubsystemBase {
     private Motor frontleft;
     private Motor frontright;

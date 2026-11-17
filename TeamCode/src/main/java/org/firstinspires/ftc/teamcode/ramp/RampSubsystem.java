@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.ramp;
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-@Config
 public class RampSubsystem extends SubsystemBase {
     private final Servo ramp;
 

@@ -4,6 +4,8 @@
  * It is extraordinarily rare that you will ever need to edit this file.
  */
 
+
+
 buildscript {
     repositories {
         mavenCentral()
@@ -25,6 +27,21 @@ allprojects {
         google()
     }
 }
+
+// PANELS:
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+        maven {
+            url = "https://mymaven.bylazar.com/releases"
+        }
+        maven {
+            url = "https://repo.dairy.foundation/releases"
+        }
+    }
+}
+
 
 repositories {
     mavenCentral()

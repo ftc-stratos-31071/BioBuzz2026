@@ -22,13 +22,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // PIDF variables for flywheel:
     @Sorter(sort = 0)
-    public static double kP = 0.002;
+    public static double kP = 0.004;
     @Sorter(sort = 1)
     public static double kI = 0;
     @Sorter(sort = 2)
-    public static double kD = 0.01;
+    public static double kD = 0.0001;
     @Sorter(sort = 3)
-    public static double kF = 0.0003;
+    public static double kF = 0.000193;
     private double integral = 0;
     private double lastError = 0;
     private double lastTime = 0;
@@ -90,7 +90,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public double getMeasuredRPM() {
-        return -(motor1.getVelocity() * 60.0) / 28;
+        return (motor1.getVelocity() * 60.0) / 28;
     }
 
     public void increaseRPM() {

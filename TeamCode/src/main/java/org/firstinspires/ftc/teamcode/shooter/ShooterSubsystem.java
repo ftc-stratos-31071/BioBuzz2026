@@ -16,7 +16,7 @@ import com.seattlesolvers.solverslib.util.Timing;
 public class ShooterSubsystem extends SubsystemBase {
     private final ServoEx servo;
     public final MotorEx motor1;
-    public static double target_RPM = 500;
+    public static double target_RPM = 3550;
     public static boolean motorRunning = false;
     public double servoAngle = 0;
 

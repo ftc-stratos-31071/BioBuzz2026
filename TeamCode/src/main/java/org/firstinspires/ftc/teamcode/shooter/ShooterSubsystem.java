@@ -22,7 +22,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // PIDF variables for flywheel:
     @Sorter(sort = 0)
-    public static double kP = 0.004;
+    public static double kP = 0.0004;
     @Sorter(sort = 1)
     public static double kI = 0;
     @Sorter(sort = 2)

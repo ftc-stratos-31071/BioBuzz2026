@@ -5,8 +5,10 @@ import android.provider.Settings;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.configurables.annotations.Sorter;
 import com.bylazar.telemetry.PanelsTelemetry;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import com.seattlesolvers.solverslib.util.TelemetryData;
@@ -29,6 +31,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double kD = 0.0001;
     @Sorter(sort = 3)
     public static double kF = 0.000193;
+    public static double NOMINAL_VOLTAGE = 12.5;
+    private final VoltageSensor voltageSensor;
     private double integral = 0;
     private double lastError = 0;
     private double lastTime = 0;
@@ -44,8 +48,10 @@ public class ShooterSubsystem extends SubsystemBase {
         motor1.resetEncoder();
 
         this.timer = timer;
-    }
 
+        voltageSensor = hMap.voltageSensor.iterator().next();
+    }
+    
     @Override
     public void periodic() {
         if (motorRunning) {
@@ -63,6 +69,7 @@ public class ShooterSubsystem extends SubsystemBase {
             lastError = error;
 
             double output = kF * target_RPM + kP * error + kI * integral + kD * derivative;
+            output *= NOMINAL_VOLTAGE / voltageSensor.getVoltage(); // voltage compensation
 
             motor1.set(output);
         } else {
@@ -72,6 +79,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         PanelsTelemetry.INSTANCE.getTelemetry().addData("target rpm", target_RPM);
         PanelsTelemetry.INSTANCE.getTelemetry().addData("measured rpm", getMeasuredRPM());
+        PanelsTelemetry.INSTANCE.getTelemetry().addData("battery voltage", voltageSensor.getVoltage());
         PanelsTelemetry.INSTANCE.getTelemetry().update();
     }
 
@@ -90,7 +98,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public double getMeasuredRPM() {
-        return (motor1.getVelocity() * 60.0) / 28;
+        return (motor1.getVelocity() * 60) / 28;
     }
 
     public void increaseRPM() {
@@ -102,7 +110,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void increaseHoodAngle() {
-        // CREATE CONSTRAINTS FOR SERVO
+    // CREATE CONSTRAINTS FOR SERVO
         servoAngle += 10;
         servo.set(servoAngle/180);
     }

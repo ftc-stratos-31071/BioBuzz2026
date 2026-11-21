@@ -10,17 +10,14 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
-import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 import com.seattlesolvers.solverslib.util.TelemetryData;
 import com.seattlesolvers.solverslib.util.Timing;
 
 @Configurable
 public class ShooterSubsystem extends SubsystemBase {
-    private final ServoEx servo;
     public final MotorEx motor1;
     public static double target_RPM = 3550;
     public static boolean motorRunning = false;
-    public double servoAngle = 0;
 
     // PIDF variables for flywheel:
     @Sorter(sort = 0)
@@ -37,21 +34,20 @@ public class ShooterSubsystem extends SubsystemBase {
     private double lastError = 0;
     private double lastTime = 0;
     private final Timing.Stopwatch timer;
-    public ShooterSubsystem(final HardwareMap hMap, final String servoName, final String motorName1, Timing.Stopwatch timer) {
-        servo = new ServoEx(hMap, servoName, 180);
-
+    public ShooterSubsystem(final HardwareMap hMap, final String motorName1, Timing.Stopwatch timer) {
         motor1 = new MotorEx(hMap, motorName1);
         motor1.setRunMode(MotorEx.RunMode.RawPower);
         motor1.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         motor1.setInverted(true);
 
         motor1.resetEncoder();
+        rpmTrim = 0; // statics survive between OpMode runs, so start each run with no trim
 
         this.timer = timer;
 
         voltageSensor = hMap.voltageSensor.iterator().next();
     }
-    
+
     @Override
     public void periodic() {
         if (motorRunning) {
@@ -101,22 +97,22 @@ public class ShooterSubsystem extends SubsystemBase {
         return (motor1.getVelocity() * 60) / 28;
     }
 
+    // ---- RPM: AutoAimSubsystem sets the base value every loop; the D-pad commands only nudge a trim on top of it ----
+    public static double rpmTrim = 0;
+    private double autoRPM = target_RPM; // last value from auto-aim (or the starting RPM before auto-aim runs)
+
+    public void setTargetRPM(double rpm) {
+        autoRPM = rpm;
+        target_RPM = autoRPM + rpmTrim;
+    }
+
     public void increaseRPM() {
-        target_RPM += 100;
+        rpmTrim += 100;
+        target_RPM = autoRPM + rpmTrim;
     }
 
     public void decreaseRPM() {
-        target_RPM -= 100;
-    }
-
-    public void increaseHoodAngle() {
-    // CREATE CONSTRAINTS FOR SERVO
-        servoAngle += 10;
-        servo.set(servoAngle/180);
-    }
-
-    public void decreaseHoodAngle() {
-        servoAngle -= 10;
-        servo.set(servoAngle/180);
+        rpmTrim -= 100;
+        target_RPM = autoRPM + rpmTrim;
     }
 }

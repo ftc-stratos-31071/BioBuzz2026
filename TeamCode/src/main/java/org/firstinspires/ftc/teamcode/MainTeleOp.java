@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.seattlesolvers.solverslib.command.CommandOpMode;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -26,6 +27,7 @@ public class MainTeleOp extends CommandOpMode {
     private GamepadEx gamepad;
     public Timing.Stopwatch timer;
     private LocalizationSubsystem localization;
+    private AutoAimSubsystem autoAim;
 
     @Override
     public void initialize() {
@@ -35,35 +37,32 @@ public class MainTeleOp extends CommandOpMode {
         gamepad = new GamepadEx(gamepad1);
 
         // SHOOTER
-        shooter = new ShooterSubsystem(hardwareMap, "hood", "shooterL", timer);
-//
-//        // toggle shooter
+        shooter = new ShooterSubsystem(hardwareMap, "shooterL", timer);
+
+        // turn shooter on at the start of teleop (it then stays on)
         GamepadButton shootButton = new GamepadButton(gamepad, GamepadKeys.Button.Y);
         shootButton.whenPressed(new ShootCommand(shooter));
-//
-//        // increase rpm
-//        GamepadButton increaseRPMButton = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_RIGHT);
-//        increaseRPMButton.whenPressed(new IncreaseRPMCommand(shooter));
-//
-//        // decrease rpm
-//        GamepadButton decreaseRPMButton = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_LEFT);
-//        decreaseRPMButton.whenPressed(new DecreaseRPMCommand(shooter));
-//
-//        // increase hood angle
-//        GamepadButton increaseHoodAngleButton = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_UP);
-//        increaseHoodAngleButton.whenPressed(new IncreaseHoodAngleCommand(shooter));
-//
-//        // decrease hood angle
-//        GamepadButton decreaseHoodAngleCommand = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_DOWN);
-//        decreaseHoodAngleCommand.whenPressed(new DecreaseHoodAngleCommand(shooter));
+
+        // rpm trim: nudges the auto-aim rpm up/down by 100 (acts as plain rpm +/- while auto-aim is off)
+        GamepadButton increaseRPMButton = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_RIGHT);
+        increaseRPMButton.whenPressed(new IncreaseRPMCommand(shooter));
+
+        GamepadButton decreaseRPMButton = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_LEFT);
+        decreaseRPMButton.whenPressed(new DecreaseRPMCommand(shooter));
 
         // TURRET
-//        turret = new TurretSubsystem(hardwareMap, "turretRight", "turretLeft", "turretEncoder");
+        turret = new TurretSubsystem(hardwareMap, "turretRight", "turretLeft", "turretEncoder");
 
         // LOCALIZATION
         localization = new LocalizationSubsystem(hardwareMap, "pinpoint", 0, 0, 0, false);
         GamepadButton resetLocationButton = new GamepadButton(gamepad, GamepadKeys.Button.OPTIONS);
         resetLocationButton.whenPressed(new ResetPositionCommand(localization));
+
+        // AUTO AIM - must be created after localization, shooter and turret
+        autoAim = new AutoAimSubsystem(localization, shooter, turret);
+        // manual fallback: turns auto-aim off/on (turret and shooter then keep their last commands)
+        GamepadButton autoAimToggleButton = new GamepadButton(gamepad, GamepadKeys.Button.BACK);
+        autoAimToggleButton.whenPressed(new InstantCommand(autoAim::toggleEnabled));
 
         // DRIVETRAIN
         drivetrain = new DrivetrainSubsystem(hardwareMap, "FL", "FR", "BL", "BR", gamepad, localization);

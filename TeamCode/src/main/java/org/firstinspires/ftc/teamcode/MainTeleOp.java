@@ -37,7 +37,7 @@ public class MainTeleOp extends CommandOpMode {
         gamepad = new GamepadEx(gamepad1);
 
         // SHOOTER
-        shooter = new ShooterSubsystem(hardwareMap, "shooterL", timer);
+//        shooter = new ShooterSubsystem(hardwareMap, "shooterL", timer);
 
         // turn shooter on at the start of teleop (it then stays on)
         GamepadButton shootButton = new GamepadButton(gamepad, GamepadKeys.Button.Y);
@@ -51,28 +51,28 @@ public class MainTeleOp extends CommandOpMode {
         decreaseRPMButton.whenPressed(new DecreaseRPMCommand(shooter));
 
         // TURRET
-        turret = new TurretSubsystem(hardwareMap, "turretRight", "turretLeft", "turretEncoder");
+//        turret = new TurretSubsystem(hardwareMap, "turretRight", "turretLeft", "turretEncoder");
 
         // LOCALIZATION
         localization = new LocalizationSubsystem(hardwareMap, "pinpoint", 0, 0, 0, false);
         GamepadButton resetLocationButton = new GamepadButton(gamepad, GamepadKeys.Button.OPTIONS);
         resetLocationButton.whenPressed(new ResetPositionCommand(localization));
 
-        // AUTO AIM - must be created after localization, shooter and turret
-        autoAim = new AutoAimSubsystem(localization, shooter, turret);
-        // manual fallback: turns auto-aim off/on (turret and shooter then keep their last commands)
-        GamepadButton autoAimToggleButton = new GamepadButton(gamepad, GamepadKeys.Button.BACK);
-        autoAimToggleButton.whenPressed(new InstantCommand(autoAim::toggleEnabled));
+//        // AUTO AIM - must be created after localization, shooter and turret
+//        autoAim = new AutoAimSubsystem(localization, shooter, turret);
+//        // manual fallback: turns auto-aim off/on (turret and shooter then keep their last commands)
+//        GamepadButton autoAimToggleButton = new GamepadButton(gamepad, GamepadKeys.Button.BACK);
+//        autoAimToggleButton.whenPressed(new InstantCommand(autoAim::toggleEnabled));
 
         // DRIVETRAIN
         drivetrain = new DrivetrainSubsystem(hardwareMap, "FL", "FR", "BL", "BR", gamepad, localization);
         // all controls already defined and checked for within class
 
-        // RAMP
-        ramp = new RampSubsystem(hardwareMap, "ramp");
-        GamepadButton rampButton = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
-        rampButton.whenPressed(new RampDownCommand(ramp));
-        rampButton.whenReleased(new RampUpCommand(ramp));
+//        // RAMP
+//        ramp = new RampSubsystem(hardwareMap, "ramp");
+//        GamepadButton rampButton = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
+//        rampButton.whenPressed(new RampDownCommand(ramp));
+//        rampButton.whenReleased(new RampUpCommand(ramp));
 
         // INTAKE - run intake independent of transfer
         intake = new IntakeSubsystem(hardwareMap, "intake");

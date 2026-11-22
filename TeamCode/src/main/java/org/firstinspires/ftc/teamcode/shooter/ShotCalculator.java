@@ -16,12 +16,12 @@ public class ShotCalculator {
     // the robot is assumed to shoot at the cell on its own side of SPLIT_Y.
     // Measure from the official field CAD, then verify with a tape measure on your practice field.
     // (If you ever play both alliances you'll need a mirrored pair for the other hive.)
-    public static final double[] TARGET_LOW_Y = {0, 0};   // TODO: cell on the low-y half of the field
-    public static final double[] TARGET_HIGH_Y = {0, 0};  // TODO: cell on the high-y half of the field
+    public static final double[] TARGET_LOW_Y = {60, 52};   // TODO: cell on the low-y half of the field
+    public static final double[] TARGET_HIGH_Y = {60, 92};  // TODO: cell on the high-y half of the field
 
     // Where the shooter exit sits relative to the tracking point (robot frame): forward / left, inches.
     // If the turret pivot is off-center this matters a lot: distance must be measured from the shooter, not the robot center.
-    public static final double SHOOTER_FWD_IN = 0;
+    public static final double SHOOTER_FWD_IN = 0.6;
     public static final double SHOOTER_LEFT_IN = 0;
 
     // Calibration table, sorted by distance: {distanceInches, flywheelRPM}.

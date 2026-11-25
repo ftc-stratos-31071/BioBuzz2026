@@ -75,7 +75,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
         PanelsTelemetry.INSTANCE.getTelemetry().addData("target rpm", target_RPM);
         PanelsTelemetry.INSTANCE.getTelemetry().addData("measured rpm", getMeasuredRPM());
-        PanelsTelemetry.INSTANCE.getTelemetry().addData("battery voltage", voltageSensor.getVoltage());
         PanelsTelemetry.INSTANCE.getTelemetry().update();
     }
 

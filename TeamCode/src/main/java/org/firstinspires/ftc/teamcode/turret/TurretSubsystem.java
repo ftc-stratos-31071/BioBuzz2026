@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.turret;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.hardware.motors.CRServoEx;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
  * Turret driven by two continuous-rotation servos and an absolute analog encoder.
@@ -22,59 +24,58 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 @Configurable
 public class TurretSubsystem extends SubsystemBase {
 
-    // ---------------- CALIBRATE THESE ----------------
-    // raw encoder angle (see "turret raw angle" in Panels) when the turret faces the robot's front
+    // raw encoder angle when the turret faces forward, increases CCW
     public static double FRONT_RAW_DEG = 0;
-    // +1 if the raw angle increases as the turret rotates CCW, -1 if it increases CW
-    public static double ENCODER_SIGN = 1;
-    // +1 if positive servo power rotates the turret CCW, -1 if it rotates CW
+    // +1 if the raw angle increases as the turret rotates CCW
+    public static double ENCODER_SIGN = -1;
+    // +1 if positive servo power rotates the turret CCW
     public static double OUTPUT_SIGN = 1;
     // voltage the encoder reads at a full 360 degrees (your old code used 3.2)
-    public static double ENCODER_MAX_VOLTS = 3.2;
+    public static double ENCODER_MAX_VOLTS = 3.3;
     // both servos push the same gear; if they fight each other, flip one of these
     private static final boolean RIGHT_SERVO_REVERSED = false;
     private static final boolean LEFT_SERVO_REVERSED = false;
-    // -------------------------------------------------
 
     // control gains (degrees in, power out). START LOW and tune from Panels.
-    public static double kP = 0.01;
-    public static double kD = 0.0005;
+    public static double kP = 0.0;
+    public static double kD = 0.000;
     public static double kS = 0.0;            // small static-friction boost, if the turret stalls near the target
     public static double MAX_POWER = 0.3;     // keep low for first bring-up
     public static double DEADBAND_DEG = 0.5;
-    public static boolean ENABLED = true;     // set false in Panels to make the turret go limp
+    public static boolean ENABLED = true;     // disables movement of turret, different from turning it off in the autoaimsubsystem, which allows for manual control instead of complete off-mode
 
-    // Where the turret is trying to go. Public so you can type a value in Panels while auto-aim is off (bring-up);
+    // you can type a value in Panels while auto-aim is off in the autoaimsubsystem, for bring-up
     // when AutoAimSubsystem controls the turret it overwrites this every loop.
     public static double targetAngleDeg = 0;
 
-    private final CRServo servoR;
-    private final CRServo servoL;
+    private final CRServoEx servoR;
+    private final CRServoEx servoL;
     private final AnalogInput encoder;
     private final TurretAimPlanner planner = new TurretAimPlanner();
 
-    private double rawAngleDeg = 0;
+    private static double rawAngleDeg = 0;
     private double measuredAngleDeg = 0;
     private double powerOut = 0;
     private double lastError = 0;
     private double lastTimeSec = 0;
     private boolean hasLast = false;
+    private Telemetry telemetry;
 
     public TurretSubsystem(final HardwareMap hMap, final String servoNameR, final String servoNameL, final String encoderName) {
-        servoR = hMap.get(CRServo.class, servoNameR);
-        servoL = hMap.get(CRServo.class, servoNameL);
+        servoR = new CRServoEx(hMap, servoNameR);
+        servoL = new CRServoEx(hMap, servoNameL);
         encoder = hMap.get(AnalogInput.class, encoderName);
 
-        servoR.setDirection(RIGHT_SERVO_REVERSED ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
-        servoL.setDirection(LEFT_SERVO_REVERSED ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+        servoR.setInverted(RIGHT_SERVO_REVERSED);
+        servoL.setInverted(LEFT_SERVO_REVERSED);
 
         measuredAngleDeg = readAngleDeg();
         targetAngleDeg = measuredAngleDeg; // start by holding wherever we are
     }
 
     /**
-     * Aim at a target given as an angle relative to the robot front (CCW+). The planner clamps it into the reachable
-     * range and handles the dead zone at the back. Call as often as you like; the loop runs in periodic().
+     * aims at target given as an angle relative to the robot front (CCW+)
+     * planner clamps it into a reachable range and handles dead zone at the back
      */
     public void setAimAngleDeg(double relativeTargetDeg) {
         targetAngleDeg = planner.plan(relativeTargetDeg);
@@ -96,7 +97,7 @@ public class TurretSubsystem extends SubsystemBase {
     public void periodic() {
         measuredAngleDeg = readAngleDeg();
 
-        if (!ENABLED) {
+        if (!ENABLED) { // hold its position if disabled
             setServoPower(0);
             powerOut = 0;
             hasLast = false;
@@ -104,7 +105,7 @@ public class TurretSubsystem extends SubsystemBase {
             return;
         }
 
-        // NOTE: no wrapping on purpose. The turret cannot cross the gap, so the error is just target - measured.
+        // no wrapping on purpose, bc turret cannot cross the gap, so error is just target - measured.
         double error = targetAngleDeg - measuredAngleDeg;
 
         double now = System.nanoTime() / 1e9;
@@ -134,12 +135,14 @@ public class TurretSubsystem extends SubsystemBase {
 
     private double readAngleDeg() {
         rawAngleDeg = encoder.getVoltage() / ENCODER_MAX_VOLTS * 360.0;
+//        rawAngleDeg=encoder.getVoltage();
+        System.out.println(rawAngleDeg);
         return TurretAimPlanner.wrap180(ENCODER_SIGN * (rawAngleDeg - FRONT_RAW_DEG));
     }
 
     private void setServoPower(double p) {
-        servoR.setPower(p);
-        servoL.setPower(p);
+        servoR.set(p);
+        servoL.set(p);
     }
 
     private void sendTelemetry() {

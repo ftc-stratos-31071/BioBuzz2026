@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -37,7 +38,7 @@ public class MainTeleOp extends CommandOpMode {
         gamepad = new GamepadEx(gamepad1);
 
         // SHOOTER
-//        shooter = new ShooterSubsystem(hardwareMap, "shooterL", timer);
+        shooter = new ShooterSubsystem(hardwareMap, "shooterL", timer);
 
         // turn shooter on at the start of teleop (it then stays on)
         GamepadButton shootButton = new GamepadButton(gamepad, GamepadKeys.Button.Y);
@@ -51,7 +52,7 @@ public class MainTeleOp extends CommandOpMode {
         decreaseRPMButton.whenPressed(new DecreaseRPMCommand(shooter));
 
         // TURRET
-//        turret = new TurretSubsystem(hardwareMap, "turretRight", "turretLeft", "turretEncoder");
+        turret = new TurretSubsystem(hardwareMap, "turretRight", "turretLeft", "turretEncoder");
 
         // LOCALIZATION
         localization = new LocalizationSubsystem(hardwareMap, "pinpoint", 0, 0, 0, false);
@@ -68,11 +69,11 @@ public class MainTeleOp extends CommandOpMode {
         drivetrain = new DrivetrainSubsystem(hardwareMap, "FL", "FR", "BL", "BR", gamepad, localization);
         // all controls already defined and checked for within class
 
-//        // RAMP
-//        ramp = new RampSubsystem(hardwareMap, "ramp");
-//        GamepadButton rampButton = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
-//        rampButton.whenPressed(new RampDownCommand(ramp));
-//        rampButton.whenReleased(new RampUpCommand(ramp));
+        // RAMP
+        ramp = new RampSubsystem(hardwareMap, "ramp");
+        GamepadButton rampButton = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
+        rampButton.whenPressed(new RampDownCommand(ramp));
+        rampButton.whenReleased(new RampUpCommand(ramp));
 
         // INTAKE - run intake independent of transfer
         intake = new IntakeSubsystem(hardwareMap, "intake");
@@ -94,5 +95,6 @@ public class MainTeleOp extends CommandOpMode {
         GamepadButton transferOutButton = new GamepadButton(gamepad, GamepadKeys.Button.B);
         transferOutButton.whenPressed(new TransferOutOnCommand(transfer, intake));
         transferOutButton.whenReleased(new TransferOutOffCommand(transfer, intake));
+
     }
 }

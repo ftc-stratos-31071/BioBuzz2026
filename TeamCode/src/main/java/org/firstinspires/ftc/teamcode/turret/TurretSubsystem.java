@@ -33,7 +33,7 @@ public class TurretSubsystem extends SubsystemBase {
     // =====================================================================================================
 
     // The raw encoder angle (0..360, shown as "turret raw angle" in Panels) when the turret points at the robot front.
-    public static double FRONT_RAW_DEG = 28.3;
+    public static double FRONT_RAW_DEG = 0;
     // +1 if the raw encoder angle INCREASES when the turret rotates counter-clockwise (seen from above), -1 if it
     // DECREASES. Flip this if "turret angle" goes the wrong way when you rotate the turret by hand.
     public static double ENCODER_SIGN = 1;
@@ -51,7 +51,7 @@ public class TurretSubsystem extends SubsystemBase {
     public static double RANGE_MARGIN_DEG = 5.0;
 
     // +1 if positive servo power rotates the turret counter-clockwise (seen from above), -1 if clockwise
-    public static double OUTPUT_SIGN = 1;
+    public static double OUTPUT_SIGN = -1;
     // both servos push the same gear; if they fight each other, flip one of these (they are code constants)
     private static final boolean RIGHT_SERVO_REVERSED = false;
     private static final boolean LEFT_SERVO_REVERSED = false;
@@ -59,18 +59,24 @@ public class TurretSubsystem extends SubsystemBase {
     // =====================================================================================================
     // CONTROL GAINS (degrees in, servo power out). Start at 0 and raise them following the tuning guide.
     // =====================================================================================================
-    public static double kP = 0.015;
-    public static double kD = 0.000;
+    public static double kP = 0.02;
+    public static double kD = 0.001;
     public static double kS = 0.0;            // small static-friction boost, if the turret stalls just short of the target
-    public static double MAX_POWER = 0.3;     // keep low for first bring-up
-    public static double DEADBAND_DEG = 0.5;  // inside this error the turret stops driving, to avoid jitter
+    public static double MAX_POWER = 4.8;     // keep low for first bring-up
+    public static double DEADBAND_DEG = 2;  // inside this error the turret stops driving, to avoid jitter
     // false = send 0 power (the turret stops being driven; it does NOT actively hold position). This is different from
     // turning off auto-aim in AutoAimSubsystem, which leaves the turret under manual/Panels control instead.
     public static boolean ENABLED = true;
 
+    // BRING-UP TEST: when MANUAL_TEST is true the PD loop is bypassed and MANUAL_POWER (-1..1) goes straight to both
+    // servos, with NO OUTPUT_SIGN applied. Use it to find out how the servos really behave and which sign makes the angle
+    // increase. Still respects ENABLED and angleValid. Leave it false during normal use.
+    public static boolean MANUAL_TEST = false;
+    public static double MANUAL_POWER = 0;
+
     // Where the turret is trying to go. You can type a value here in Panels while auto-aim is off (bring-up).
     // When AutoAimSubsystem controls the turret it overwrites this every loop.
-    public static double targetAngleDeg = 10;
+    public static double targetAngleDeg = 0;
 
     private final CRServoEx servoR;
     private final CRServoEx servoL;
@@ -102,7 +108,7 @@ public class TurretSubsystem extends SubsystemBase {
         servoL.setInverted(LEFT_SERVO_REVERSED);
 
         measuredAngleDeg = readAngleDeg();   // first read: sets up the turn count (startup assumption)
-        targetAngleDeg = measuredAngleDeg;   // start by holding wherever we are
+//        targetAngleDeg = measuredAngleDeg;   // start by holding wherever we are
     }
 
     /**
@@ -147,6 +153,15 @@ public class TurretSubsystem extends SubsystemBase {
         if (!ENABLED || !angleValid) {
             setServoPower(0);
             powerOut = 0;
+            hasLast = false;
+            sendTelemetry();
+            return;
+        }
+
+        // bring-up test: send a fixed raw power and skip the PD loop entirely
+        if (MANUAL_TEST) {
+            setServoPower(MANUAL_POWER);
+            powerOut = MANUAL_POWER;
             hasLast = false;
             sendTelemetry();
             return;

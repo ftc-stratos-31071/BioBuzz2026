@@ -23,7 +23,7 @@ public class MotorCurrentTest extends LinearOpMode {
         }
         motors[0].setDirection(DcMotor.Direction.REVERSE);
         motors[2].setDirection(DcMotor.Direction.REVERSE);
-        motors[3].setDirection(DcMotor.Direction.REVERSE);
+        motors[3].setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
 

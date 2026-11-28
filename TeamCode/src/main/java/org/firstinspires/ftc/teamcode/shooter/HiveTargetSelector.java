@@ -21,7 +21,7 @@ public class HiveTargetSelector {
     // The y value (field inches, in YOUR field frame) that splits the field into the two halves.
     // Your ResetPositionCommand zeroes the pose at (0, 0), so this is the y of the middle of the field
     // measured from wherever you zero (0 only if you zero at the field's center line).
-    public static double SPLIT_Y = 72; // TODO
+    public static double SPLIT_Y = 51.8; // halfway between the two cells (in X)
     // The side only flips once the robot is this far past SPLIT_Y (total band width, inches). 0 = flip exactly at SPLIT_Y.
     public static double HYSTERESIS_IN = 4;
     // -----------------------------------------------

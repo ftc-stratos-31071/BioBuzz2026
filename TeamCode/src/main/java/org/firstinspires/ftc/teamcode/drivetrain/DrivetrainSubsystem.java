@@ -30,6 +30,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         this.gamepad = gamepad;
 
         localization = l;
+        setZeroPowerBraking(true);
     }
 
     @Override

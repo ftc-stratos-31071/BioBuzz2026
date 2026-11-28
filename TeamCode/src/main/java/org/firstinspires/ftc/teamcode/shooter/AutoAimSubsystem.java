@@ -24,8 +24,8 @@ public class AutoAimSubsystem extends SubsystemBase {
     // Both default to OFF so nothing changes until you've calibrated the turret and filled in the rpm table:
     //   CONTROL_TURRET: turn on after the turret calibration steps
     //   CONTROL_SHOOTER: turn on after ShotCalculator's TABLE has real rpm values (otherwise it commands 0 rpm)
-    public static boolean CONTROL_TURRET = false;
-    public static boolean CONTROL_SHOOTER = false;
+    public static boolean CONTROL_TURRET = true;
+    public static boolean CONTROL_SHOOTER = true;
 
     private final LocalizationSubsystem localization;
     private final ShooterSubsystem shooter;
@@ -49,7 +49,7 @@ public class AutoAimSubsystem extends SubsystemBase {
         double y = localization.getY();
         double heading = localization.getHeadingRad();
 
-        selector.update(y);
+        selector.update(x); // our cells line up along X, so split by X
         ShotCalculator.Solution sol = ShotCalculator.solve(x, y, heading, selector.getSide());
 
         if (CONTROL_TURRET) {

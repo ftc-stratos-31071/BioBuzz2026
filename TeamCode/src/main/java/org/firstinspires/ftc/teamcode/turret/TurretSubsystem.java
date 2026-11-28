@@ -33,10 +33,10 @@ public class TurretSubsystem extends SubsystemBase {
     // =====================================================================================================
 
     // The raw encoder angle (0..360, shown as "turret raw angle" in Panels) when the turret points at the robot front.
-    public static double FRONT_RAW_DEG = 0;
+    public static double FRONT_RAW_DEG = -54;
     // +1 if the raw encoder angle INCREASES when the turret rotates counter-clockwise (seen from above), -1 if it
     // DECREASES. Flip this if "turret angle" goes the wrong way when you rotate the turret by hand.
-    public static double ENCODER_SIGN = 1;
+    public static double ENCODER_SIGN = -1;
     // The voltage the encoder reads at the very top of its range (just before it wraps back to 0). If this is wrong,
     // every time the encoder wraps the unwrapped angle jumps by a small error, and the error piles up turn after turn.
     public static double ENCODER_MAX_VOLTS = 3.3;
@@ -51,7 +51,7 @@ public class TurretSubsystem extends SubsystemBase {
     public static double RANGE_MARGIN_DEG = 5.0;
 
     // +1 if positive servo power rotates the turret counter-clockwise (seen from above), -1 if clockwise
-    public static double OUTPUT_SIGN = -1;
+    public static double OUTPUT_SIGN = 1;
     // both servos push the same gear; if they fight each other, flip one of these (they are code constants)
     private static final boolean RIGHT_SERVO_REVERSED = false;
     private static final boolean LEFT_SERVO_REVERSED = false;

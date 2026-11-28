@@ -9,6 +9,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.seattlesolvers.solverslib.util.Timing;
 import java.util.concurrent.TimeUnit;
+import org.firstinspires.ftc.teamcode.door.*;
 import org.firstinspires.ftc.teamcode.drivetrain.*;
 import org.firstinspires.ftc.teamcode.intake.*;
 import org.firstinspires.ftc.teamcode.localization.*;
@@ -24,6 +25,7 @@ public class MainTeleOp extends CommandOpMode {
     private TurretSubsystem turret;
     private DrivetrainSubsystem drivetrain;
     private RampSubsystem ramp;
+    private DoorSubsystem door;
     private IntakeSubsystem intake;
     private GamepadEx gamepad;
     public Timing.Stopwatch timer;
@@ -60,10 +62,10 @@ public class MainTeleOp extends CommandOpMode {
         resetLocationButton.whenPressed(new ResetPositionCommand(localization));
 
 //        // AUTO AIM - must be created after localization, shooter and turret
-//        autoAim = new AutoAimSubsystem(localization, shooter, turret);
-//        // manual fallback: turns auto-aim off/on (turret and shooter then keep their last commands)
-//        GamepadButton autoAimToggleButton = new GamepadButton(gamepad, GamepadKeys.Button.BACK);
-//        autoAimToggleButton.whenPressed(new InstantCommand(autoAim::toggleEnabled));
+        autoAim = new AutoAimSubsystem(localization, shooter, turret);
+        // manual fallback: turns auto-aim off/on (turret and shooter then keep their last commands)
+        GamepadButton autoAimToggleButton = new GamepadButton(gamepad, GamepadKeys.Button.BACK);
+        autoAimToggleButton.whenPressed(new InstantCommand(autoAim::toggleEnabled));
 
         // DRIVETRAIN
         drivetrain = new DrivetrainSubsystem(hardwareMap, "FL", "FR", "BL", "BR", gamepad, localization);
@@ -83,6 +85,10 @@ public class MainTeleOp extends CommandOpMode {
         intakeButton.whenPressed(new IntakeOnCommand(intake));
         intakeButton.whenReleased(new IntakeOffCommand(intake));
 
+        // DOOR - closes when intaking (L1), opens when feeding the shooter (cross)
+//        door = new DoorSubsystem(hardwareMap, "door");
+//        intakeButton.whenPressed(new DoorCloseCommand(door));
+
         // TRANSFER - all transfer actions do equivalent for intake - they run in parallel
         TransferSubsystem transfer = new TransferSubsystem(hardwareMap, "transfer");
 
@@ -90,6 +96,7 @@ public class MainTeleOp extends CommandOpMode {
         GamepadButton transferButton = new GamepadButton(gamepad, GamepadKeys.Button.A);
         transferButton.whenPressed(new TransferOnCommand(transfer, intake));
         transferButton.whenReleased(new TransferOffCommand(transfer, intake));
+//        transferButton.whenPressed(new DoorOpenCommand(door));
 
         // transfer+intake out on/off
         GamepadButton transferOutButton = new GamepadButton(gamepad, GamepadKeys.Button.B);

@@ -16,8 +16,8 @@ public class ShotCalculator {
     // the robot is assumed to shoot at the cell on its own side of SPLIT_Y.
     // Measure from the official field CAD, then verify with a tape measure on your practice field.
     // (If you ever play both alliances you'll need a mirrored pair for the other hive.)
-    public static final double[] TARGET_LOW_Y = {60, 52};   // TODO: cell on the low-y half of the field
-    public static final double[] TARGET_HIGH_Y = {60, 92};  // TODO: cell on the high-y half of the field
+    public static final double[] TARGET_LOW_Y = {36.9, -43.6};   // cell A (smaller X)
+    public static final double[] TARGET_HIGH_Y = {66.7, -40.9};  // cell B (bigger X)
 
     // Where the shooter exit sits relative to the tracking point (robot frame): forward / left, inches.
     // If the turret pivot is off-center this matters a lot: distance must be measured from the shooter, not the robot center.
@@ -30,8 +30,14 @@ public class ShotCalculator {
     // farthest places you'll drive, not just the places you'll shoot from.
     // PLACEHOLDERS ONLY (zeros). Fill from real test shots, then add more rows as needed.
     private static final double[][] TABLE = {
-            {24, 0},    // TODO
-            {120, 0}    // TODO
+            {33, 3200},
+            {41, 3360},
+            {51.5, 3485},
+            {52.5, 3550},
+            {58.75, 3660},
+            {65.5, 3600},
+            {74, 3630},
+            {83, 3950}
     };
     // -----------------------------------------------
 
